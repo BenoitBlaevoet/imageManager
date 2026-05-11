@@ -165,7 +165,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
             <label class="field-label" for="output-folder">Output folder (absolute path)</label>
             <input type="text" id="output-folder" class="field-input"
                    placeholder="e.g. C:/projects/my-site/public/images">
-            <p class="field-hint">Generated images saved here as <code>{component}/{image-name}/{preset}_{variant}_1x.webp</code>.</p>
+            <p class="field-hint">Generated images saved here. Leave blank to use the project's default <code>output/</code> folder.</p>
 
             <label class="field-label" style="margin-top:.75rem" for="default-format">Default output format</label>
             <select id="default-format" class="field-input">

@@ -23,7 +23,11 @@ if ($method === 'POST') {
     if (isset($body['output_folder'])) {
         $folder = rtrim(str_replace('\\', '/', $body['output_folder']), '/');
 
-        if ($folder !== '' && !is_dir($folder)) {
+        if ($folder === '') {
+            $folder = str_replace('\\', '/', dirname(__DIR__, 2) . '/output');
+        }
+
+        if (!is_dir($folder)) {
             http_response_code(422);
             echo json_encode(['error' => 'Output folder does not exist: ' . $folder]);
             exit;
