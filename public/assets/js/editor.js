@@ -41,7 +41,6 @@
                 <span>${esc(preset.label)}</span>
                 <div class="preset-group-actions">
                     <button class="btn btn-sm btn-secondary btn-gen-all" title="Generate all variants">Generate All</button>
-                    <button class="btn btn-sm btn-ghost btn-open-folder" title="Open output folder">📂</button>
                 </div>
             `;
 
@@ -56,11 +55,6 @@
             header.querySelector('.btn-gen-all').addEventListener('click', e => {
                 e.stopPropagation();
                 generateAll(preset.id);
-            });
-
-            header.querySelector('.btn-open-folder').addEventListener('click', e => {
-                e.stopPropagation();
-                openFolder();
             });
 
             group.appendChild(header);
@@ -290,5 +284,6 @@
     }
 
     // ── Init ──────────────────────────────────────────────────────────────────
+    document.getElementById('btn-open-folder').addEventListener('click', openFolder);
     loadState();
 })();

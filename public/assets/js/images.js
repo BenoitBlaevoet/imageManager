@@ -327,9 +327,6 @@
 
         // Upload modal close
         document.getElementById('upload-close')?.addEventListener('click', closeUploadModal);
-        document.getElementById('upload-modal')?.addEventListener('click', e => {
-            if (e.target.id === 'upload-modal') closeUploadModal();
-        });
 
         // Drop zone
         const dz = document.getElementById('drop-zone');
@@ -357,10 +354,6 @@
         document.getElementById('btn-manage-tags')?.addEventListener('click', openTagManager);
         document.getElementById('tag-manager-close')?.addEventListener('click', () => {
             document.getElementById('tag-manager-modal').style.display = 'none';
-        });
-        document.getElementById('tag-manager-modal')?.addEventListener('click', e => {
-            if (e.target.id === 'tag-manager-modal')
-                document.getElementById('tag-manager-modal').style.display = 'none';
         });
         document.getElementById('btn-create-tag')?.addEventListener('click', createTagFromManager);
         document.getElementById('new-tag-input')?.addEventListener('keydown', e => {

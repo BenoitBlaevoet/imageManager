@@ -80,6 +80,7 @@
                         ${hasImage ? 'Change Image' : 'Add Image'}
                     </button>
                     ${hasImage ? `<a href="editor.php?component_id=${esc(comp.id)}&image_id=${esc(comp.active_image.id)}" class="btn btn-primary btn-sm">Edit Crops</a>` : ''}
+                    ${hasImage ? `<button class="btn btn-ghost btn-sm btn-open-folder" title="Open output folder"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></button>` : ''}
                 </div>
             </div>
         `;
@@ -87,6 +88,18 @@
         card.querySelector('.btn-pick-img').addEventListener('click', () =>
             openImagePickerModal(comp.id, comp.label)
         );
+
+        card.querySelector('.btn-open-folder')?.addEventListener('click', async () => {
+            const res = await fetch('api/open-folder.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ component_id: comp.id, image_id: comp.active_image.id }),
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                alert(data.error || 'Could not open folder.');
+            }
+        });
 
         const countBtn = card.querySelector('.btn-image-count');
         if (countBtn) {
@@ -197,9 +210,6 @@
     }
 
     document.getElementById('image-picker-close')?.addEventListener('click', closeImagePickerModal);
-    document.getElementById('image-picker-modal')?.addEventListener('click', e => {
-        if (e.target.id === 'image-picker-modal') closeImagePickerModal();
-    });
     document.getElementById('btn-picker-cancel')?.addEventListener('click', closeImagePickerModal);
     document.getElementById('btn-picker-upload')?.addEventListener('click', () => {
         openUploadModal({
@@ -290,9 +300,6 @@
     }
 
     document.getElementById('image-browser-close')?.addEventListener('click', closeImageBrowser);
-    document.getElementById('image-browser-modal')?.addEventListener('click', e => {
-        if (e.target.id === 'image-browser-modal') closeImageBrowser();
-    });
 
     // ── Settings modal ────────────────────────────────────────────────────────
 
@@ -308,9 +315,6 @@
 
     document.getElementById('btn-settings').addEventListener('click', openSettings);
     document.getElementById('settings-close').addEventListener('click', closeSettings);
-    document.getElementById('settings-modal').addEventListener('click', e => {
-        if (e.target.id === 'settings-modal') closeSettings();
-    });
 
     document.getElementById('btn-save-settings').addEventListener('click', async () => {
         const folder = document.getElementById('output-folder').value.trim();
@@ -454,7 +458,6 @@
     document.getElementById('btn-presets').addEventListener('click', openPresetsModal);
     document.getElementById('presets-close').addEventListener('click', closePresetsModal);
     document.getElementById('btn-close-presets').addEventListener('click', closePresetsModal);
-    presetsModal.addEventListener('click', e => { if (e.target === presetsModal) closePresetsModal(); });
 
     document.getElementById('btn-add-preset').addEventListener('click', () => {
         const p = { id: 'new-preset-' + Date.now(), label: 'New Preset', variants: [{ id: 'variant-1', label: 'Variant 1', width: 400, height: 300 }] };
@@ -578,7 +581,6 @@
     document.getElementById('btn-components').addEventListener('click', openComponentsModal);
     document.getElementById('components-close').addEventListener('click', closeComponentsModal);
     document.getElementById('btn-close-components').addEventListener('click', closeComponentsModal);
-    componentsModal.addEventListener('click', e => { if (e.target === componentsModal) closeComponentsModal(); });
 
     document.getElementById('btn-add-component').addEventListener('click', () => {
         const c = { id: 'component-' + Date.now(), label: 'New Component', description: '', presets: [] };
