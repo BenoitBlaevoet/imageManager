@@ -1,0 +1,16 @@
+claude.md
+.claude
+
+vendor/
+
+/data/*.db
+
+/storage/source/*
+!/storage/source/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+
+/output/*
+!/output/.gitkeep
+
+/config/app-config.json

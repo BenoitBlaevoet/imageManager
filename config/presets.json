@@ -1,0 +1,42 @@
+{
+    "presets": [
+        {
+            "id": "homepage-banner",
+            "label": "Homepage Banner",
+            "format": "webp",
+            "variants": [
+                {
+                    "id": "mobile",
+                    "label": "Mobile",
+                    "width": 375,
+                    "height": 200
+                },
+                {
+                    "id": "large",
+                    "label": "Large",
+                    "width": 1440,
+                    "height": 600
+                }
+            ]
+        },
+        {
+            "id": "product-thumbnail",
+            "label": "Product Thumbnail",
+            "format": "webp",
+            "variants": [
+                {
+                    "id": "square",
+                    "label": "Square",
+                    "width": 400,
+                    "height": 400
+                },
+                {
+                    "id": "big-square",
+                    "label": "Big Square",
+                    "width": 800,
+                    "height": 800
+                }
+            ]
+        }
+    ]
+}

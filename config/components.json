@@ -1,0 +1,16 @@
+{
+    "components": [
+        {
+            "id": "partner-banner",
+            "label": "Partner Page Banner",
+            "description": "Banner displayed on the partners listing page",
+            "presets": ["homepage-banner"]
+        },
+        {
+            "id": "product-hero",
+            "label": "Product Hero Image",
+            "description": "Hero image on the product detail page",
+            "presets": ["homepage-banner", "product-thumbnail"]
+        }
+    ]
+}
