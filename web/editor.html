@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="assets/css/editor.css">
+</head>
+<body class="editor-layout">
+
+<header class="topbar">
+    <a href="/" class="topbar-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Library
+    </a>
+    <div class="topbar-brand">
+        {{if .CompLabel}}<span class="topbar-component-tag">{{.CompLabel}}</span>{{end}}
+        {{.OriginalName}}
+    </div>
+    <div class="topbar-meta">{{.Width}} × {{.Height}} px</div>
+    <button class="btn btn-secondary btn-sm" id="btn-open-folder" title="Open output folder">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Open Folder
+    </button>
+</header>
+
+<div class="editor-body"
+     data-image-id="{{.ImageID}}"
+     data-filename="{{.Filename}}"
+     data-original-width="{{.Width}}"
+     data-original-height="{{.Height}}"
+     data-component-id="{{.ComponentID}}">
+
+    <!-- Left panel: preset navigator -->
+    <aside class="preset-panel" id="preset-panel">
+        <div id="preset-list">
+            <div class="loading-state">Loading presets…</div>
+        </div>
+    </aside>
+
+    <!-- Right panel: crop canvas -->
+    <section class="crop-panel" id="crop-panel">
+        <div class="crop-panel-empty" id="crop-panel-empty">
+            <p>Select a variant on the left to start cropping.</p>
+        </div>
+        <div class="crop-panel-active" id="crop-panel-active" style="display:none">
+            <div class="crop-toolbar">
+                <span class="crop-toolbar-info" id="crop-info-label"></span>
+                <button class="btn btn-primary" id="btn-save-crop">Save Crop</button>
+            </div>
+            <div class="crop-canvas-wrap" id="crop-canvas-wrap">
+                <img id="crop-img" src="" alt="">
+            </div>
+            <div class="crop-coords" id="crop-coords">
+                <span>x: <strong id="coord-x">—</strong></span>
+                <span>y: <strong id="coord-y">—</strong></span>
+                <span>w: <strong id="coord-w">—</strong></span>
+                <span>h: <strong id="coord-h">—</strong></span>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<script src="assets/js/editor.js"></script>
+</body>
+</html>
