@@ -9,25 +9,27 @@ import (
 	"image/png"
 	"io"
 
+	genwebp "github.com/gen2brain/webp"
 	"github.com/disintegration/imaging"
-	_ "golang.org/x/image/webp" // register WebP decode
 )
 
-// DecodeAny decodes an image.Image from a reader, given the MIME type.
-func DecodeAny(r io.Reader, _ string) (image.Image, error) {
-	// imaging.Decode handles jpeg, png, gif, tiff, bmp.
-	// WebP is handled by golang.org/x/image/webp registered via the blank import.
+// DecodeAny decodes an image.Image from a reader given the MIME type.
+// WebP files use gen2brain/webp (pure Go via WASM); all others use imaging.Decode.
+func DecodeAny(r io.Reader, mimeType string) (image.Image, error) {
+	if mimeType == "image/webp" {
+		return genwebp.Decode(r)
+	}
 	return imaging.Decode(r)
 }
 
-// CropAndResize crops a region from src (in source coordinates) then resizes to targetW×targetH.
+// CropAndResize crops a region from src (source pixel coords) then resizes to targetW×targetH.
 func CropAndResize(src image.Image, cropX, cropY, cropW, cropH, targetW, targetH int) image.Image {
 	cropped := imaging.Crop(src, image.Rect(cropX, cropY, cropX+cropW, cropY+cropH))
 	return imaging.Resize(cropped, targetW, targetH, imaging.Lanczos)
 }
 
-// ThumbnailFit resizes src to fit within w×h, preserving aspect ratio.
-// If h is 0, scales by width only.
+// ThumbnailFit resizes src to fit within w×h preserving aspect ratio.
+// Pass h=0 to scale by width only.
 func ThumbnailFit(src image.Image, w, h int) image.Image {
 	if h == 0 {
 		return imaging.Resize(src, w, 0, imaging.Lanczos)
@@ -35,26 +37,28 @@ func ThumbnailFit(src image.Image, w, h int) image.Image {
 	return imaging.Fit(src, w, h, imaging.Lanczos)
 }
 
-// ThumbnailFill resizes src to exactly w×h using center crop (no distortion).
+// ThumbnailFill resizes src to exactly w×h via center crop (no distortion).
 func ThumbnailFill(src image.Image, w, h int) image.Image {
 	return imaging.Fill(src, w, h, imaging.Center, imaging.Linear)
 }
 
-// EncodeImage encodes img to the writer in the requested format.
-// WebP output is not supported without CGo; webp requests fall back to JPEG.
-func EncodeImage(w io.Writer, img image.Image, format string) error {
+// EncodeImage encodes img to w in the requested format (webp/png/jpg).
+func EncodeImage(out io.Writer, img image.Image, format string) error {
 	switch format {
+	case "webp":
+		return genwebp.Encode(out, img, genwebp.Options{Quality: 85})
 	case "png":
-		return png.Encode(w, img)
-	default: // jpg / jpeg / webp (webp falls back to jpeg)
-		return jpeg.Encode(w, compositeOnWhite(img), &jpeg.Options{Quality: 85})
+		return png.Encode(out, img)
+	default: // jpg / jpeg
+		return jpeg.Encode(out, compositeOnWhite(img), &jpeg.Options{Quality: 85})
 	}
 }
 
-// OutputExt returns the file extension for the given format.
-// webp falls back to jpg since we can't encode WebP without CGo.
+// OutputExt returns the file extension for the given format string.
 func OutputExt(format string) string {
 	switch format {
+	case "webp":
+		return "webp"
 	case "png":
 		return "png"
 	default:
@@ -62,12 +66,12 @@ func OutputExt(format string) string {
 	}
 }
 
-// EncodeJPEG encodes img as JPEG (for thumbnails/display).
-func EncodeJPEG(w io.Writer, img image.Image) error {
-	return jpeg.Encode(w, compositeOnWhite(img), &jpeg.Options{Quality: 85})
+// EncodeJPEG encodes img as JPEG (used for thumbnails/display served over HTTP).
+func EncodeJPEG(out io.Writer, img image.Image) error {
+	return jpeg.Encode(out, compositeOnWhite(img), &jpeg.Options{Quality: 85})
 }
 
-// EncodeJPEGBytes encodes img as JPEG and returns the bytes.
+// EncodeJPEGBytes encodes img as JPEG and returns the raw bytes.
 func EncodeJPEGBytes(img image.Image) ([]byte, error) {
 	var buf bytes.Buffer
 	if err := EncodeJPEG(&buf, img); err != nil {
@@ -76,7 +80,8 @@ func EncodeJPEGBytes(img image.Image) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-// compositeOnWhite flattens alpha onto white (required before JPEG encoding).
+// compositeOnWhite flattens the alpha channel onto a white background.
+// Required before JPEG encoding to avoid dark transparent regions.
 func compositeOnWhite(src image.Image) image.Image {
 	bounds := src.Bounds()
 	dst := image.NewRGBA(bounds)

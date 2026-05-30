@@ -17,7 +17,6 @@ import (
 	"strings"
 	"time"
 
-	_ "golang.org/x/image/webp" // register WebP decode for MIME detection
 )
 
 func (a *App) Upload(w http.ResponseWriter, r *http.Request) {
